@@ -1,10 +1,10 @@
-#include "qhttpclient.hpp"
-#include "qhttpclientrequest.hpp"
-#include "qhttpclientresponse.hpp"
-#include "qhttpserver.hpp"
-#include "qhttpserverconnection.hpp"
-#include "qhttpserverrequest.hpp"
-#include "qhttpserverresponse.hpp"
+#include "qhttp/qhttpclient.hpp"
+#include "qhttp/qhttpclientrequest.hpp"
+#include "qhttp/qhttpclientresponse.hpp"
+#include "qhttp/qhttpserver.hpp"
+#include "qhttp/qhttpserverconnection.hpp"
+#include "qhttp/qhttpserverrequest.hpp"
+#include "qhttp/qhttpserverresponse.hpp"
 
 #include "../include/ticktock.hxx"
 #include "../include/unixcatcher.hpp"
@@ -26,14 +26,14 @@ using namespace qhttp::client;
 ///////////////////////////////////////////////////////////////////////////////
 struct Client
 {
-    int start(quint16 port, int count) {
+    int start(const QString& ip, quint16 port, int count) {
         QObject::connect(&iclient, &QHttpClient::disconnected, [this]() {
             finalize();
         });
 
         QUrl url;
         url.setScheme("http");
-        url.setHost("localhost");
+        url.setHost(ip);
         url.setPort(port);
 
         iurl   = url;
@@ -192,6 +192,11 @@ main(int argc, char ** argv) {
             "number/path", "10022"
             });
     parser.addOption({
+            {"i", "ip"},
+            "ip address of test server",
+            "ip", "127.0.0.1"
+            });
+    parser.addOption({
             {"c", "count"},
             "count of request/response pairs (only in client mode). default: 100",
             "number", "100"
@@ -209,6 +214,7 @@ main(int argc, char ** argv) {
         } else if ( mode == QLatin1Literal("client") ) {
             client::Client client;
             return client.start(
+                    parser.value("ip"),
                     parser.value("port").toUShort(),
                     parser.value("count").toInt()
                     );
