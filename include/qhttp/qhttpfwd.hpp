@@ -185,6 +185,8 @@ class QHttpResponsePrivate;
 #   else // static library
 #       define QHTTP_API
 #   endif
+#endif
+
 #if QHTTP_MEMORY_LOG > 0
 #   define QHTTP_LINE_LOG fprintf(stderr, "%s(): obj = %p    @ %s[%d]\n",\
     __FUNCTION__, this, __FILE__, __LINE__);
